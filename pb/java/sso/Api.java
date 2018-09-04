@@ -5195,9 +5195,10 @@ public final class Api {
       "r\022\n\n\002id\030\001 \001(\005\022\014\n\004name\030\002 \001(\t\022\r\n\005phone\030\003 \001" +
       "(\t\022\014\n\004gids\030\004 \003(\005\022\021\n\tavailable\030\005 \001(\010\"K\n\tU" +
       "serGroup\022\n\n\002id\030\001 \001(\005\022\014\n\004name\030\002 \001(\t\022\021\n\tre" +
-      "sources\030\003 \003(\005\022\021\n\tavailable\030\004 \001(\0102D\n\nSsoS" +
+      "sources\030\003 \003(\005\022\021\n\tavailable\030\004 \001(\0102l\n\nSsoS" +
       "ervice\0226\n\014GetLoginInfo\022\021.sso.LoginInfoRe" +
-      "q\032\021.sso.LoginInfoRsp\"\000B\005Z\003ssob\006proto3"
+      "q\032\021.sso.LoginInfoRsp\"\000\022&\n\014SaveUserInfo\022\t" +
+      ".sso.User\032\t.sso.User\"\000B\005Z\003ssob\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {

@@ -6,6 +6,8 @@ option go_package = "sso";
 service SsoService {
     rpc GetLoginInfo (LoginInfoReq) returns (LoginInfoRsp) {
     }
+    rpc SaveUserInfo (User) returns (User) {
+    }
 }
 
 message LoginInfoReq {

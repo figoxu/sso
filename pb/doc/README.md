@@ -132,6 +132,7 @@ HelloRequest 请求结构
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | GetLoginInfo | [LoginInfoReq](#sso.LoginInfoReq) | [LoginInfoRsp](#sso.LoginInfoRsp) |  |
+| SaveUserInfo | [User](#sso.User) | [User](#sso.User) |  |
 
  
 
