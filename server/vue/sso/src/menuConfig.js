@@ -108,6 +108,11 @@ const asideMenuConfig = [
     path: '/login',
     icon: 'home',
   },
+  {
+    name: 'IceworksPreviewPage',
+    path: '/IceworksPreviewPage',
+    icon: 'home',
+  },
 ];
 
 export { headerMenuConfig, asideMenuConfig };

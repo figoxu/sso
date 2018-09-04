@@ -6,6 +6,7 @@ import HeaderAsideLayout from './layouts/HeaderAsideLayout';
 import EmptyLayout from './layouts/EmptyLayout';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
+import IceworksPreviewPage from './pages/IceworksPreviewPage';
 import NotFound from './pages/NotFound';
 
 const routerConfig = [
@@ -13,6 +14,11 @@ const routerConfig = [
     path: '/',
     layout: EmptyLayout,
     component: Login,
+  },
+  {
+    path: '/IceworksPreviewPage',
+    layout: HeaderAsideLayout,
+    component: IceworksPreviewPage,
   },
   {
     path: '*',

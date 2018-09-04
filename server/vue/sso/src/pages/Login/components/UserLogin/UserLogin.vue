@@ -3,7 +3,7 @@
     <div class="user-login-bg" :style="{'background-image':`url(${backgroundImage})`}"></div>
     <div class="content-wrapper">
       <h2 class="slogan">
-        欢迎使用 <br /> ICE 内容管理系统
+        欢迎使用 <br /> 账户认证中心
       </h2>
       <div class="form-container">
         <h4 class="form-title">登录</h4>
@@ -19,7 +19,7 @@
                 </el-form-item>
               </el-col>
             </el-row>
-            <el-row class="form-item">
+            <el-row class="form-item" style='margin-top:10px;'>
               <el-col>
                 <el-form-item prop="password" :rules="[ { required: true, message: '密码不能为空'}]">
                   <div class="form-line">
@@ -29,28 +29,12 @@
                 </el-form-item>
               </el-col>
             </el-row>
-            <el-row class=form-item>
-              <el-col>
-                <el-form-item>
-                  <el-checkbox class="checkbox">记住账号</el-checkbox>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row class="form-item">
+            <el-row class="form-item" style='margin-top:10px;'>
               <el-button type="primary" class="submit-btn" size="small" @click="submitBtn">
                 登 录
               </el-button>
             </el-row>
           </div>
-          <el-row class="tips">
-            <a href="/" class="link">
-              立即注册
-            </a>
-            <span class="line">|</span>
-            <a href="/" class="link">
-              忘记密码
-            </a>
-          </el-row>
         </el-form>
       </div>
     </div>
@@ -59,8 +43,7 @@
 
 <script>
 import BasicContainer from '@vue-materials/basic-container';
-const backgroundImage =
-  'https://img.alicdn.com/tfs/TB1zsNhXTtYBeNjy1XdXXXXyVXa-2252-1500.png';
+const backgroundImage ='/images/login_bg.png';
 export default {
   components: { BasicContainer },
   name: 'UserLogin',
