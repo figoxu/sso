@@ -103,6 +103,11 @@ const asideMenuConfig = [
       },
     ],
   },
+  {
+    name: 'login',
+    path: '/login',
+    icon: 'home',
+  },
 ];
 
 export { headerMenuConfig, asideMenuConfig };
