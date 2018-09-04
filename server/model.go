@@ -35,6 +35,7 @@ type Resource struct {
 	Id         int
 	Pid        int
 	Name       string
+	SysName    string
 	Priority   int
 	Path       string
 	Type       string //菜单、按钮
@@ -43,11 +44,11 @@ type Resource struct {
 }
 
 type User struct {
-	Id    int
-	Name  string
-	Phone string
-	Gids  []int
-	Available  bool
+	Id        int
+	Name      string
+	Phone     string
+	Gids      []int
+	Available bool
 }
 
 type UserGroup struct {
