@@ -7,6 +7,11 @@ import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
 
+import (
+	context "golang.org/x/net/context"
+	grpc "google.golang.org/grpc"
+)
+
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
@@ -351,6 +356,111 @@ func init() {
 	proto.RegisterType((*Resource)(nil), "sso.Resource")
 	proto.RegisterType((*User)(nil), "sso.User")
 	proto.RegisterType((*UserGroup)(nil), "sso.UserGroup")
+}
+
+// Reference imports to suppress errors if they are not otherwise used.
+var _ context.Context
+var _ grpc.ClientConn
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the grpc package it is being compiled against.
+const _ = grpc.SupportPackageIsVersion4
+
+// SsoServiceClient is the client API for SsoService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type SsoServiceClient interface {
+	GetLoginInfo(ctx context.Context, in *LoginInfoReq, opts ...grpc.CallOption) (*LoginInfoRsp, error)
+	SaveUserInfo(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
+}
+
+type ssoServiceClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewSsoServiceClient(cc *grpc.ClientConn) SsoServiceClient {
+	return &ssoServiceClient{cc}
+}
+
+func (c *ssoServiceClient) GetLoginInfo(ctx context.Context, in *LoginInfoReq, opts ...grpc.CallOption) (*LoginInfoRsp, error) {
+	out := new(LoginInfoRsp)
+	err := c.cc.Invoke(ctx, "/sso.SsoService/GetLoginInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *ssoServiceClient) SaveUserInfo(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error) {
+	out := new(User)
+	err := c.cc.Invoke(ctx, "/sso.SsoService/SaveUserInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// SsoServiceServer is the server API for SsoService service.
+type SsoServiceServer interface {
+	GetLoginInfo(context.Context, *LoginInfoReq) (*LoginInfoRsp, error)
+	SaveUserInfo(context.Context, *User) (*User, error)
+}
+
+func RegisterSsoServiceServer(s *grpc.Server, srv SsoServiceServer) {
+	s.RegisterService(&_SsoService_serviceDesc, srv)
+}
+
+func _SsoService_GetLoginInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoginInfoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SsoServiceServer).GetLoginInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/sso.SsoService/GetLoginInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SsoServiceServer).GetLoginInfo(ctx, req.(*LoginInfoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SsoService_SaveUserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(User)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SsoServiceServer).SaveUserInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/sso.SsoService/SaveUserInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SsoServiceServer).SaveUserInfo(ctx, req.(*User))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _SsoService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "sso.SsoService",
+	HandlerType: (*SsoServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetLoginInfo",
+			Handler:    _SsoService_GetLoginInfo_Handler,
+		},
+		{
+			MethodName: "SaveUserInfo",
+			Handler:    _SsoService_SaveUserInfo_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "api.proto",
 }
 
 func init() { proto.RegisterFile("api.proto", fileDescriptor_api_83c8423b67cc1b65) }
