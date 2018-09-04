@@ -45,6 +45,8 @@ type Resource struct {
 
 type User struct {
 	Id        int
+	Account   string
+	Password  string
 	Name      string
 	Phone     string
 	Gids      []int
@@ -64,6 +66,21 @@ type ResourceDao struct {
 
 type UserDao struct {
 	db *gorm.DB
+}
+
+func NewUserDao(db *gorm.DB) *UserDao {
+	return &UserDao{
+		db: db,
+	}
+}
+
+func (p *UserDao) GetByLoginName(loginName string) User {
+	user := User{}
+	sb := Figo.NewSqlBuffer()
+	sb.Append(" SELECT * FROM user WHERE name=? ", loginName)
+	sb.Append(" OR phone=? ", loginName)
+	p.db.Raw(sb.SQL(), sb.Params()...).Scan(&user)
+	return user
 }
 
 type UserGroupDao struct {
