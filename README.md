@@ -49,18 +49,14 @@ sso-->end:获得用户信息
 
 # 数据库设计
 https://blog.csdn.net/hzw2312/article/details/54612962
-## 用户信息表
+## 用户信息表 User
 
-## 用户组表
+## 用户组表  UserGroup (类似于角色)
 用于批量配置用户权限
 （人的集合、和其它集团系统的单位信息表，存在共同相同）
-
-## 角色表
 权限的集合
 
-## 权限表
-
-## 权限配置信息表
+## 权限表 Resource
 
 
 
@@ -71,6 +67,7 @@ https://blog.csdn.net/hzw2312/article/details/54612962
     <a href="<%=basePath %>manager/insertFilm.jsp">添加影片信息</a><br />
     </security:authorize>
 ```
+范例里的ROLE,对应数据库的的UserGroup
 * 按钮级权限控制: has_permission ,has_role 的验证
 
 ## Service的API
