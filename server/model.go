@@ -45,6 +45,21 @@ type Resource struct {
 	Available  bool
 }
 
+func (p *Resource) toProto() *sso.Resource {
+	resource := &sso.Resource{
+		Id:         int32(p.Id),
+		Pid:        int32(p.Pid),
+		Name:       p.Name,
+		SysName:    p.SysName,
+		Priority:   int32(p.Priority),
+		Path:       p.Path,
+		Type:       p.Type,
+		Permission: p.Permission,
+		Available:  p.Available,
+	}
+	return resource
+}
+
 type ResourceDao struct {
 	db *gorm.DB
 }
@@ -56,7 +71,7 @@ func NewResourceDao(db *gorm.DB) *ResourceDao {
 }
 
 func (p *ResourceDao) FindByUid(uid int) []Resource {
-	resources :=make([]Resource,0)
+	resources := make([]Resource, 0)
 	return resources
 }
 
@@ -119,13 +134,34 @@ func (p *UserDao) Update(user User, fields ...string) {
 	p.db.Model(&user).Select(fields).Update(dataMap)
 }
 
-type UserGroupDao struct {
-	db *gorm.DB
-}
-
 type UserGroup struct {
 	Id        int
 	Name      string
 	Resources []int
 	Available bool
+}
+
+func (p *UserGroup) toProto() *sso.UserGroup {
+	ug := &sso.UserGroup{
+		Id:        int32(p.Id),
+		Name:      p.Name,
+		Resources: convertIntArray2Int32Array(p.Resources),
+		Available: p.Available,
+	}
+	return ug
+}
+
+type UserGroupDao struct {
+	db *gorm.DB
+}
+
+func NewUserGroupDao(db *gorm.DB) *UserGroupDao {
+	return &UserGroupDao{
+		db: db,
+	}
+}
+
+func (p *UserGroupDao) FindByUid(uid int) []UserGroup {
+	ugs := make([]UserGroup, 0)
+	return ugs
 }

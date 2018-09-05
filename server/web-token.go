@@ -63,14 +63,15 @@ func (p *TokenHelper) NewToken(uid int) string {
 	return rawToken
 }
 
-func (p *TokenHelper) ParseToken(basicRawToken string) (uid int, rawToken string) {
+func ParseToken(basicRawToken string) (uid int, rawToken string) {
 	content := BasicAuthDecode(basicRawToken)
 	uid, rawToken = ParseBasicAuth(content)
 	return uid, rawToken
 }
 
-func (p *TokenHelper) CheckRawToken(uid int, rawToken string) bool {
-	user := p.userDao.GetById(uid)
+func CheckRawToken(uid int, rawToken string) bool {
+	userDao:=NewUserDao(pg_rbac)
+	user := userDao.GetById(uid)
 	tokenSaltHelper := NewUserTokenSaltHelper(user)
 	token := tokenSaltHelper.Encode(rawToken)
 	return user.Token == token

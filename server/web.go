@@ -51,9 +51,8 @@ func h_redirect(ctx *gin.Context) {
 				basicRawToken = fmt.Sprint(brt)
 			}
 		}
-		tokenHelper := NewTokenHelper(ctx)
-		uid, rawToken := tokenHelper.ParseToken(basicRawToken)
-		return tokenHelper.CheckRawToken(uid, rawToken)
+		uid, rawToken := ParseToken(basicRawToken)
+		return CheckRawToken(uid, rawToken)
 	}
 	saveFromAddress()
 	jumpLoc := from
