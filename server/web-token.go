@@ -13,6 +13,12 @@ import (
 	"encoding/base64"
 )
 
+const (
+	SSO_FROM            = "sso_from"
+	SSO_BASIC_RAW_TOKEN = "basic_raw_token"
+	SSO_TOKEN_COOKIE    = "sso"
+)
+
 type TokenHelper struct {
 	ctx     *gin.Context
 	userDao *UserDao
@@ -38,7 +44,7 @@ func (p *TokenHelper) NewToken(uid int) string {
 	}
 	writeCookie := func(basicRawToken string) {
 		cookie := &http.Cookie{
-			Name:   "sso",
+			Name:   SSO_TOKEN_COOKIE,
 			Value:  basicRawToken,
 			Path:   "/",
 			Domain: sysEnv.domain,
@@ -48,7 +54,7 @@ func (p *TokenHelper) NewToken(uid int) string {
 	}
 	storeToken2Session := func(basicRawToken string) {
 		session := sessions.Default(p.ctx)
-		session.Set("basic_raw_token", basicRawToken)
+		session.Set(SSO_BASIC_RAW_TOKEN, basicRawToken)
 	}
 	rawToken := genToken()
 	basicRawToken := BasicAuthEncode(NewBasicAuthStr(uid, rawToken))

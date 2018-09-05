@@ -7,6 +7,7 @@ import (
 	"github.com/figoxu/gh"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-contrib/sessions"
+	"fmt"
 )
 
 func initWeb(port string) {
@@ -31,11 +32,38 @@ func mount() *gin.Engine {
 }
 
 func h_redirect(ctx *gin.Context) {
-	//todo 保存 from的地址到 session
-
-	//todo 验证 cookie 是否包含已登陆信息【已登陆，则跳回之前的地址】
-
-	//todo 未登录，则调到登陆页面
+	env := ctx.MustGet("env").(*Env)
+	from := env.ph.String("from")
+	saveFromAddress := func() {
+		session := sessions.Default(ctx)
+		session.Set(SSO_FROM, from)
+	}
+	checkLogin := func() bool {
+		basicRawToken, err := ctx.Cookie(SSO_TOKEN_COOKIE)
+		if err != nil {
+			return false
+		}
+		if basicRawToken == "" {
+			session := sessions.Default(ctx)
+			if brt := session.Get(SSO_BASIC_RAW_TOKEN); brt == nil {
+				return false
+			} else {
+				basicRawToken = fmt.Sprint(brt)
+			}
+		}
+		tokenHelper := NewTokenHelper(ctx)
+		uid, rawToken := tokenHelper.ParseToken(basicRawToken)
+		return tokenHelper.CheckRawToken(uid, rawToken)
+	}
+	saveFromAddress()
+	jumpLoc := from
+	if checkLogin() && jumpLoc == "" {
+		jumpLoc = sysEnv.welcome_page
+	} else {
+		jumpLoc = sysEnv.login_page
+	}
+	ctx.Redirect(http.StatusOK, sysEnv.welcome_page)
+	return
 }
 
 func h_login(c *gin.Context) {
@@ -47,25 +75,30 @@ func h_login(c *gin.Context) {
 	env := c.MustGet("env").(*Env)
 	fh := env.fh
 	username, password := fh.String("username"), fh.String("password")
-	validate := func() bool{
+	validate := func() bool {
 		if username == "" || password == "" {
 			return false
 		}
-		user:=NewUserDao(pg_rbac).GetByLoginName(username)
-		if user.Id<=0 || user.Password!=password {
-			//todo Password需要加密
-
+		user := NewUserDao(pg_rbac).GetByLoginName(username)
+		passwordSaltHelp := NewUserPasswordSaltHelper(user)
+		if user.Id <= 0 || user.Password != passwordSaltHelp.Decode(password) {
+			return false;
 		}
 		return true
 	}
-	//todo 对登陆信息验证
-	if  !validate(){
+	if !validate() {
 		resp.SuccessFlag = false
 		c.JSON(http.StatusOK, resp)
 		return
 	}
 	resp.SuccessFlag = true
-	//resp.JumpUrl =
+	session := sessions.Default(c)
+	redirect_address := session.Get(SSO_FROM)
+	if redirect_address == nil {
+		resp.JumpUrl = sysEnv.welcome_page
+	} else {
+		resp.JumpUrl = fmt.Sprint(redirect_address)
+	}
 	c.JSON(http.StatusOK, resp)
 }
 
