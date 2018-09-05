@@ -41,7 +41,7 @@ func (p *TokenHelper) NewToken(uid int) string {
 			Name:   "sso",
 			Value:  basicRawToken,
 			Path:   "/",
-			Domain: p.domain,
+			Domain: sysEnv.domain,
 			MaxAge: 60 * 60 * 24,
 		}
 		http.SetCookie(p.ctx.Writer, cookie)
