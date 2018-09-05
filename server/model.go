@@ -5,6 +5,7 @@ import (
 	"time"
 	"github.com/figoxu/Figo"
 	"github.com/quexer/utee"
+	"reflect"
 )
 
 var (
@@ -44,13 +45,16 @@ type Resource struct {
 }
 
 type User struct {
-	Id        int
-	Account   string
-	Password  string
-	Name      string
-	Phone     string
-	Gids      []int
-	Available bool
+	Id           int
+	Account      string
+	Password     string
+	PasswordSalt string
+	Token        string
+	TokenSalt    string
+	Name         string
+	Phone        string
+	Gids         []int
+	Available    bool
 }
 
 type UserGroup struct {
@@ -74,13 +78,30 @@ func NewUserDao(db *gorm.DB) *UserDao {
 	}
 }
 
-func (p *UserDao) GetByLoginName(loginName string) User {
-	user := User{}
+func (p *UserDao) GetByLoginName(loginName string) (user User) {
 	sb := Figo.NewSqlBuffer()
 	sb.Append(" SELECT * FROM user WHERE name=? ", loginName)
 	sb.Append(" OR phone=? ", loginName)
 	p.db.Raw(sb.SQL(), sb.Params()...).Scan(&user)
 	return user
+}
+
+func (p *UserDao) GetById(id int) (user User) {
+	p.db.Raw("SELECT * FROM user WHERE id=?", id).Scan(&user)
+	return user
+}
+
+func (p *UserDao) Update(user User, fields ...string) {
+	if recordNil := user.Id <= 0; recordNil {
+		return
+	}
+	immutable := reflect.ValueOf(user)
+	dataMap := make(map[string]interface{})
+	for _, field := range fields {
+		prop := Figo.CamelString(field)
+		dataMap[field] = immutable.FieldByName(prop).Interface()
+	}
+	p.db.Model(&user).Select(fields).Update(dataMap)
 }
 
 type UserGroupDao struct {
