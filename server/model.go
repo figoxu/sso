@@ -6,6 +6,7 @@ import (
 	"github.com/figoxu/Figo"
 	"github.com/quexer/utee"
 	"reflect"
+	"github.com/figoxu/sso/pb/sso"
 )
 
 var (
@@ -44,6 +45,21 @@ type Resource struct {
 	Available  bool
 }
 
+type ResourceDao struct {
+	db *gorm.DB
+}
+
+func NewResourceDao(db *gorm.DB) *ResourceDao {
+	return &ResourceDao{
+		db: db,
+	}
+}
+
+func (p *ResourceDao) FindByUid(uid int) []Resource {
+	resources :=make([]Resource,0)
+	return resources
+}
+
 type User struct {
 	Id           int
 	Account      string
@@ -57,15 +73,14 @@ type User struct {
 	Available    bool
 }
 
-type UserGroup struct {
-	Id        int
-	Name      string
-	Resources []int
-	Available bool
-}
-
-type ResourceDao struct {
-	db *gorm.DB
+func (p *User) toProto() *sso.User {
+	return &sso.User{
+		Id:        int32(p.Id),
+		Name:      p.Name,
+		Phone:     p.Phone,
+		Gids:      convertIntArray2Int32Array(p.Gids),
+		Available: p.Available,
+	}
 }
 
 type UserDao struct {
@@ -106,4 +121,11 @@ func (p *UserDao) Update(user User, fields ...string) {
 
 type UserGroupDao struct {
 	db *gorm.DB
+}
+
+type UserGroup struct {
+	Id        int
+	Name      string
+	Resources []int
+	Available bool
 }
