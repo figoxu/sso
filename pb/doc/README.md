@@ -34,7 +34,7 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| token | [string](#string) |  |  |
+| basicRawToken | [string](#string) |  |  |
 
 
 

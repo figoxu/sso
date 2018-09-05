@@ -11,7 +11,7 @@ service SsoService {
 }
 
 message LoginInfoReq {
-    string token = 1;
+    string basicRawToken = 1;
 }
 
 // HelloRequest 请求结构

@@ -19,14 +19,14 @@ public final class Api {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>string token = 1;</code>
+     * <code>string basicRawToken = 1;</code>
      */
-    java.lang.String getToken();
+    java.lang.String getBasicRawToken();
     /**
-     * <code>string token = 1;</code>
+     * <code>string basicRawToken = 1;</code>
      */
     com.google.protobuf.ByteString
-        getTokenBytes();
+        getBasicRawTokenBytes();
   }
   /**
    * Protobuf type {@code sso.LoginInfoReq}
@@ -41,7 +41,7 @@ public final class Api {
       super(builder);
     }
     private LoginInfoReq() {
-      token_ = "";
+      basicRawToken_ = "";
     }
 
     @java.lang.Override
@@ -71,7 +71,7 @@ public final class Api {
             case 10: {
               java.lang.String s = input.readStringRequireUtf8();
 
-              token_ = s;
+              basicRawToken_ = s;
               break;
             }
             default: {
@@ -106,34 +106,34 @@ public final class Api {
               sso.Api.LoginInfoReq.class, sso.Api.LoginInfoReq.Builder.class);
     }
 
-    public static final int TOKEN_FIELD_NUMBER = 1;
-    private volatile java.lang.Object token_;
+    public static final int BASICRAWTOKEN_FIELD_NUMBER = 1;
+    private volatile java.lang.Object basicRawToken_;
     /**
-     * <code>string token = 1;</code>
+     * <code>string basicRawToken = 1;</code>
      */
-    public java.lang.String getToken() {
-      java.lang.Object ref = token_;
+    public java.lang.String getBasicRawToken() {
+      java.lang.Object ref = basicRawToken_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
         com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        token_ = s;
+        basicRawToken_ = s;
         return s;
       }
     }
     /**
-     * <code>string token = 1;</code>
+     * <code>string basicRawToken = 1;</code>
      */
     public com.google.protobuf.ByteString
-        getTokenBytes() {
-      java.lang.Object ref = token_;
+        getBasicRawTokenBytes() {
+      java.lang.Object ref = basicRawToken_;
       if (ref instanceof java.lang.String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        token_ = b;
+        basicRawToken_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
@@ -154,8 +154,8 @@ public final class Api {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!getTokenBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, token_);
+      if (!getBasicRawTokenBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, basicRawToken_);
       }
       unknownFields.writeTo(output);
     }
@@ -166,8 +166,8 @@ public final class Api {
       if (size != -1) return size;
 
       size = 0;
-      if (!getTokenBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, token_);
+      if (!getBasicRawTokenBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, basicRawToken_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -185,8 +185,8 @@ public final class Api {
       sso.Api.LoginInfoReq other = (sso.Api.LoginInfoReq) obj;
 
       boolean result = true;
-      result = result && getToken()
-          .equals(other.getToken());
+      result = result && getBasicRawToken()
+          .equals(other.getBasicRawToken());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -198,8 +198,8 @@ public final class Api {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + TOKEN_FIELD_NUMBER;
-      hash = (53 * hash) + getToken().hashCode();
+      hash = (37 * hash) + BASICRAWTOKEN_FIELD_NUMBER;
+      hash = (53 * hash) + getBasicRawToken().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -333,7 +333,7 @@ public final class Api {
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        token_ = "";
+        basicRawToken_ = "";
 
         return this;
       }
@@ -361,7 +361,7 @@ public final class Api {
       @java.lang.Override
       public sso.Api.LoginInfoReq buildPartial() {
         sso.Api.LoginInfoReq result = new sso.Api.LoginInfoReq(this);
-        result.token_ = token_;
+        result.basicRawToken_ = basicRawToken_;
         onBuilt();
         return result;
       }
@@ -410,8 +410,8 @@ public final class Api {
 
       public Builder mergeFrom(sso.Api.LoginInfoReq other) {
         if (other == sso.Api.LoginInfoReq.getDefaultInstance()) return this;
-        if (!other.getToken().isEmpty()) {
-          token_ = other.token_;
+        if (!other.getBasicRawToken().isEmpty()) {
+          basicRawToken_ = other.basicRawToken_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -443,71 +443,71 @@ public final class Api {
         return this;
       }
 
-      private java.lang.Object token_ = "";
+      private java.lang.Object basicRawToken_ = "";
       /**
-       * <code>string token = 1;</code>
+       * <code>string basicRawToken = 1;</code>
        */
-      public java.lang.String getToken() {
-        java.lang.Object ref = token_;
+      public java.lang.String getBasicRawToken() {
+        java.lang.Object ref = basicRawToken_;
         if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs =
               (com.google.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
-          token_ = s;
+          basicRawToken_ = s;
           return s;
         } else {
           return (java.lang.String) ref;
         }
       }
       /**
-       * <code>string token = 1;</code>
+       * <code>string basicRawToken = 1;</code>
        */
       public com.google.protobuf.ByteString
-          getTokenBytes() {
-        java.lang.Object ref = token_;
+          getBasicRawTokenBytes() {
+        java.lang.Object ref = basicRawToken_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
-          token_ = b;
+          basicRawToken_ = b;
           return b;
         } else {
           return (com.google.protobuf.ByteString) ref;
         }
       }
       /**
-       * <code>string token = 1;</code>
+       * <code>string basicRawToken = 1;</code>
        */
-      public Builder setToken(
+      public Builder setBasicRawToken(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
   
-        token_ = value;
+        basicRawToken_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>string token = 1;</code>
+       * <code>string basicRawToken = 1;</code>
        */
-      public Builder clearToken() {
+      public Builder clearBasicRawToken() {
         
-        token_ = getDefaultInstance().getToken();
+        basicRawToken_ = getDefaultInstance().getBasicRawToken();
         onChanged();
         return this;
       }
       /**
-       * <code>string token = 1;</code>
+       * <code>string basicRawToken = 1;</code>
        */
-      public Builder setTokenBytes(
+      public Builder setBasicRawTokenBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
         
-        token_ = value;
+        basicRawToken_ = value;
         onChanged();
         return this;
       }
@@ -5184,21 +5184,22 @@ public final class Api {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\tapi.proto\022\003sso\"\035\n\014LoginInfoReq\022\r\n\005toke" +
-      "n\030\001 \001(\t\"n\n\014LoginInfoRsp\022\027\n\004user\030\001 \001(\0132\t." +
-      "sso.User\022 \n\tresources\030\002 \003(\0132\r.sso.Resour" +
-      "ce\022#\n\013userGroupes\030\003 \003(\0132\016.sso.UserGroup\"" +
-      "\227\001\n\010Resource\022\n\n\002id\030\001 \001(\005\022\013\n\003pid\030\002 \001(\005\022\014\n" +
-      "\004name\030\003 \001(\t\022\017\n\007sysName\030\004 \001(\t\022\020\n\010priority" +
-      "\030\005 \001(\005\022\014\n\004path\030\006 \001(\t\022\014\n\004type\030\007 \001(\t\022\022\n\npe" +
-      "rmission\030\010 \001(\t\022\021\n\tavailable\030\t \001(\010\"P\n\004Use" +
-      "r\022\n\n\002id\030\001 \001(\005\022\014\n\004name\030\002 \001(\t\022\r\n\005phone\030\003 \001" +
-      "(\t\022\014\n\004gids\030\004 \003(\005\022\021\n\tavailable\030\005 \001(\010\"K\n\tU" +
-      "serGroup\022\n\n\002id\030\001 \001(\005\022\014\n\004name\030\002 \001(\t\022\021\n\tre" +
-      "sources\030\003 \003(\005\022\021\n\tavailable\030\004 \001(\0102l\n\nSsoS" +
-      "ervice\0226\n\014GetLoginInfo\022\021.sso.LoginInfoRe" +
-      "q\032\021.sso.LoginInfoRsp\"\000\022&\n\014SaveUserInfo\022\t" +
-      ".sso.User\032\t.sso.User\"\000B\005Z\003ssob\006proto3"
+      "\n\tapi.proto\022\003sso\"%\n\014LoginInfoReq\022\025\n\rbasi" +
+      "cRawToken\030\001 \001(\t\"n\n\014LoginInfoRsp\022\027\n\004user\030" +
+      "\001 \001(\0132\t.sso.User\022 \n\tresources\030\002 \003(\0132\r.ss" +
+      "o.Resource\022#\n\013userGroupes\030\003 \003(\0132\016.sso.Us" +
+      "erGroup\"\227\001\n\010Resource\022\n\n\002id\030\001 \001(\005\022\013\n\003pid\030" +
+      "\002 \001(\005\022\014\n\004name\030\003 \001(\t\022\017\n\007sysName\030\004 \001(\t\022\020\n\010" +
+      "priority\030\005 \001(\005\022\014\n\004path\030\006 \001(\t\022\014\n\004type\030\007 \001" +
+      "(\t\022\022\n\npermission\030\010 \001(\t\022\021\n\tavailable\030\t \001(" +
+      "\010\"P\n\004User\022\n\n\002id\030\001 \001(\005\022\014\n\004name\030\002 \001(\t\022\r\n\005p" +
+      "hone\030\003 \001(\t\022\014\n\004gids\030\004 \003(\005\022\021\n\tavailable\030\005 " +
+      "\001(\010\"K\n\tUserGroup\022\n\n\002id\030\001 \001(\005\022\014\n\004name\030\002 \001" +
+      "(\t\022\021\n\tresources\030\003 \003(\005\022\021\n\tavailable\030\004 \001(\010" +
+      "2l\n\nSsoService\0226\n\014GetLoginInfo\022\021.sso.Log" +
+      "inInfoReq\032\021.sso.LoginInfoRsp\"\000\022&\n\014SaveUs" +
+      "erInfo\022\t.sso.User\032\t.sso.User\"\000B\005Z\003ssob\006p" +
+      "roto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -5217,7 +5218,7 @@ public final class Api {
     internal_static_sso_LoginInfoReq_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_sso_LoginInfoReq_descriptor,
-        new java.lang.String[] { "Token", });
+        new java.lang.String[] { "BasicRawToken", });
     internal_static_sso_LoginInfoRsp_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_sso_LoginInfoRsp_fieldAccessorTable = new
