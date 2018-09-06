@@ -16,15 +16,16 @@ func initTestEnv(){
 
 func TestUserDao_Save(t *testing.T) {
 	initTestEnv()
-	u:=User{
+	u:= UserAccount{
 		Account:"figo",
 		Password:"123456",
 		PasswordSalt:"figoxu",
 	}
-	sh:=NewUserPasswordSaltHelper(u)
-	u.Password = sh.Encode(u.Password)
 	userDao:= NewUserDao(pg_rbac)
 	userDao.Save(&u)
+	sh:=NewUserPasswordSaltHelper(u)
+	u.Password = sh.Encode(u.Password)
+	userDao.Update(u,Figo.SnakeStrings("Password")...)
 	log.Println(Figo.JsonString(u))
 }
 

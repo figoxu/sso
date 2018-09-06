@@ -28,7 +28,7 @@ func initDb(dbUrl string) {
 
 func Entities() (values []interface{}) {
 	values = append(values, &Resource{})
-	values = append(values, &User{})
+	values = append(values, &UserAccount{})
 	values = append(values, &UserGroup{})
 	return values
 }
@@ -75,7 +75,7 @@ func (p *ResourceDao) FindByUid(uid int) []Resource {
 	return resources
 }
 
-type User struct {
+type UserAccount struct {
 	Id           int
 	Account      string
 	Password     string
@@ -88,7 +88,7 @@ type User struct {
 	Available    bool
 }
 
-func (p *User) toProto() *sso.User {
+func (p *UserAccount) toProto() *sso.User {
 	return &sso.User{
 		Id:        int32(p.Id),
 		Name:      p.Name,
@@ -108,33 +108,33 @@ func NewUserDao(db *gorm.DB) *UserDao {
 	}
 }
 
-func (p *UserDao) GetByLoginName(loginName string) (user User) {
+func (p *UserDao) GetByLoginName(loginName string) (user UserAccount) {
 	sb := Figo.NewSqlBuffer()
-	sb.Append(" SELECT * FROM user WHERE name=? ", loginName)
+	sb.Append(" SELECT * FROM user_account WHERE account=? ", loginName)
 	sb.Append(" OR phone=? ", loginName)
 	p.db.Raw(sb.SQL(), sb.Params()...).Scan(&user)
 	return user
 }
 
-func (p *UserDao) GetById(id int) (user User) {
-	p.db.Raw("SELECT * FROM user WHERE id=?", id).Scan(&user)
+func (p *UserDao) GetById(id int) (user UserAccount) {
+	p.db.Raw("SELECT * FROM user_account WHERE id=?", id).Scan(&user)
 	return user
 }
 
-func (p *UserDao) Update(user User, fields ...string) {
-	if recordNil := user.Id <= 0; recordNil {
+func (p *UserDao) Update(userAccount UserAccount, fields ...string) {
+	if recordNil := userAccount.Id <= 0; recordNil {
 		return
 	}
-	immutable := reflect.ValueOf(user)
+	immutable := reflect.ValueOf(userAccount)
 	dataMap := make(map[string]interface{})
 	for _, field := range fields {
 		prop := Figo.CamelString(field)
 		dataMap[field] = immutable.FieldByName(prop).Interface()
 	}
-	p.db.Model(&user).Select(fields).Update(dataMap)
+	p.db.Model(&userAccount).Select(fields).Update(dataMap)
 }
 
-func (p *UserDao) Save(user *User)  {
+func (p *UserDao) Save(user *UserAccount)  {
 	p.db.Save(&user)
 }
 

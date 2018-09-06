@@ -3,6 +3,7 @@ package main
 import (
 	"testing"
 	"log"
+	"github.com/figoxu/Figo"
 )
 
 func TestNewSaltHelper(t *testing.T) {
@@ -22,4 +23,14 @@ func TestBasicAuthDecode(t *testing.T) {
 	result := BasicAuthDecode(content)
 	log.Println(result)
 	log.Println(result == s)
+}
+
+func TestNewUserPasswordSaltHelper(t *testing.T) {
+	initTestEnv()
+	userDao:=NewUserDao(pg_rbac)
+	u:=userDao.GetByLoginName("figo")
+	log.Println(Figo.JsonString(u))
+	saltHelper:=NewUserPasswordSaltHelper(u)
+	pwd:=saltHelper.Decode(u.Password)
+	log.Println("PASSWORD IS : ",pwd)
 }

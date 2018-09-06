@@ -80,7 +80,7 @@ func h_login(c *gin.Context) {
 		}
 		user := NewUserDao(pg_rbac).GetByLoginName(username)
 		passwordSaltHelp := NewUserPasswordSaltHelper(user)
-		if user.Id <= 0 || user.Password != passwordSaltHelp.Decode(password) {
+		if user.Id <= 0 || password != passwordSaltHelp.Decode(user.Password) {
 			return false;
 		}
 		return true

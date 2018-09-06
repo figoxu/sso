@@ -89,11 +89,11 @@ func NewSaltHelper(basic, plus string) SaltHelper {
 	}
 }
 
-func NewUserTokenSaltHelper(user User) SaltHelper {
+func NewUserTokenSaltHelper(user UserAccount) SaltHelper {
 	return NewSaltHelper(fmt.Sprint(user.Id, user.TokenSalt), user.TokenSalt)
 }
 
-func NewUserPasswordSaltHelper(user User) SaltHelper {
+func NewUserPasswordSaltHelper(user UserAccount) SaltHelper {
 	return NewSaltHelper(fmt.Sprint(user.Id, user.PasswordSalt), user.PasswordSalt)
 }
 
