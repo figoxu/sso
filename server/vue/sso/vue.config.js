@@ -5,4 +5,7 @@ module.exports = {
       extensions: ['.js', '.json', '.vue'],
     },
   },
+    devServer: {
+        disableHostCheck: true,
+    },
 };

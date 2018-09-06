@@ -84,7 +84,7 @@ type User struct {
 	TokenSalt    string
 	Name         string
 	Phone        string
-	Gids         []int
+	Gids         IntArray `sql:"type:integer[]"`
 	Available    bool
 }
 
@@ -137,7 +137,7 @@ func (p *UserDao) Update(user User, fields ...string) {
 type UserGroup struct {
 	Id        int
 	Name      string
-	Resources []int
+	Resources IntArray `sql:"type:integer[]"`
 	Available bool
 }
 
