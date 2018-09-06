@@ -8,6 +8,8 @@ import (
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-contrib/sessions"
 	"fmt"
+	"net/url"
+	"github.com/quexer/utee"
 )
 
 func initWeb(port string) {
@@ -33,8 +35,8 @@ func mount() *gin.Engine {
 
 //curl http://sso.localhost/sso/login/redirect?from=https%3a%2f%2fgithub.com%2ffigoxu%2fsso
 func h_redirect(ctx *gin.Context) {
-	vs:=ctx.Request.URL.Query()
-	from:=vs.Get("from")
+	vs := ctx.Request.URL.Query()
+	from := vs.Get("from")
 	fmt.Println(">>>>>>>>>")
 	fmt.Println(from)
 	fmt.Println("<<<<<<<<<")
@@ -44,28 +46,28 @@ func h_redirect(ctx *gin.Context) {
 		session.Save();
 	}
 	checkLogin := func() bool {
-		basicRawToken, err := ctx.Cookie(SSO_TOKEN_COOKIE)
+		basicPureToken, err := ctx.Cookie(SSO_TOKEN_COOKIE)
 		if err != nil {
 			return false
 		}
-		if basicRawToken == "" {
+		if basicPureToken == "" {
 			session := sessions.Default(ctx)
-			if brt := session.Get(SSO_BASIC_RAW_TOKEN); brt == nil {
+			if brt := session.Get(SSO_BASIC_PURE_TOKEN); brt == nil {
 				return false
 			} else {
-				basicRawToken = fmt.Sprint(brt)
+				basicPureToken = fmt.Sprint(brt)
 			}
 		}
-		uid, rawToken := ParseToken(basicRawToken)
-		return CheckRawToken(uid, rawToken)
+		uid, pureToken := ParseToken(basicPureToken)
+		return CheckPureToken(uid, pureToken)
 	}
 	saveFromAddress()
-	jumpLoc := from
-	if jumpLoc==""{
-		if checkLogin(){
-			jumpLoc = sysEnv.welcome_page
+	jumpLoc := sysEnv.login_page
+	if checkLogin() {
+		if from != "" {
+			jumpLoc = from
 		} else {
-			jumpLoc = sysEnv.login_page
+			jumpLoc = sysEnv.welcome_page
 		}
 	}
 	ctx.Redirect(http.StatusFound, jumpLoc)
@@ -91,6 +93,8 @@ func h_login(c *gin.Context) {
 		if user.Id <= 0 || password != passwordSaltHelp.Decode(user.Password) {
 			return false;
 		}
+		th := NewTokenHelper(c)
+		th.NewToken(user.Id)
 		return true
 	}
 	if !validate() {
@@ -99,14 +103,27 @@ func h_login(c *gin.Context) {
 		return
 	}
 	resp.SuccessFlag = true
-	session := sessions.Default(c)
-	redirect_address := session.Get(SSO_FROM)
-	if redirect_address == nil {
-		resp.JumpUrl = sysEnv.welcome_page
-	} else {
-		resp.JumpUrl = fmt.Sprint(redirect_address)
-	}
+	resp.JumpUrl = jumpUrl(sessions.Default(c))
 	c.JSON(http.StatusOK, resp)
+}
+
+func jumpUrl(session sessions.Session) (redirect_address string) {
+	v := session.Get(SSO_FROM)
+	if v == nil {
+		redirect_address = sysEnv.welcome_page
+	} else {
+		redirect_address = fmt.Sprint(v)
+	}
+	return redirect_address
+}
+
+func urlAppendParam(rawUrl, k, v string) string {
+	reqURI, err := url.ParseRequestURI(rawUrl)
+	utee.Chk(err)
+	vs := reqURI.Query()
+	vs.Set(k, v)
+	reqURI.RawQuery = vs.Encode()
+	return reqURI.String()
 }
 
 type Env struct {

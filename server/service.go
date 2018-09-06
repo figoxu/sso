@@ -36,7 +36,7 @@ func (p *SsoService) GetLoginInfo(ctx context.Context, req *sso.LoginInfoReq) (r
 	}
 
 	uid, rawToken := ParseToken(req.BasicRawToken)
-	if CheckRawToken(uid, rawToken) {
+	if CheckPureToken(uid, rawToken) {
 		return nil, errors.New("not auth")
 	}
 	userDao, resourceDao, userGroupDao := NewUserDao(pg_rbac), NewResourceDao(pg_rbac), NewUserGroupDao(pg_rbac)

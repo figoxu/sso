@@ -14,9 +14,9 @@ import (
 )
 
 const (
-	SSO_FROM            = "sso_from"
-	SSO_BASIC_RAW_TOKEN = "basic_raw_token"
-	SSO_TOKEN_COOKIE    = "sso"
+	SSO_FROM             = "sso_from"
+	SSO_BASIC_PURE_TOKEN = "basic_raw_token"
+	SSO_TOKEN_COOKIE     = "sso"
 )
 
 type TokenHelper struct {
@@ -34,13 +34,13 @@ func NewTokenHelper(c *gin.Context) TokenHelper {
 
 func (p *TokenHelper) NewToken(uid int) string {
 	genToken := func() (basicRawToken string) {
+		pureToken := uuid.New()
 		user := p.userDao.GetById(uid)
-		user.Token = uuid.New()
 		user.TokenSalt = uuid.New()
-		p.userDao.Update(user, Figo.SnakeStrings("Token", "TokenSalt")...)
 		tokenSaltHelper := NewUserTokenSaltHelper(user)
-		rawToken := tokenSaltHelper.Encode(user.Token)
-		return rawToken
+		user.Token = tokenSaltHelper.Encode(pureToken)
+		p.userDao.Update(user, Figo.SnakeStrings("Token", "TokenSalt")...)
+		return pureToken
 	}
 	writeCookie := func(basicRawToken string) {
 		cookie := &http.Cookie{
@@ -54,24 +54,24 @@ func (p *TokenHelper) NewToken(uid int) string {
 	}
 	storeToken2Session := func(basicRawToken string) {
 		session := sessions.Default(p.ctx)
-		session.Set(SSO_BASIC_RAW_TOKEN, basicRawToken)
+		session.Set(SSO_BASIC_PURE_TOKEN, basicRawToken)
 		session.Save()
 	}
-	rawToken := genToken()
-	basicRawToken := BasicAuthEncode(NewBasicAuthStr(uid, rawToken))
-	writeCookie(basicRawToken)
-	storeToken2Session(basicRawToken)
-	return rawToken
+	pureToken := genToken()
+	basicPureToken := BasicAuthEncode(NewBasicAuthStr(uid, pureToken))
+	writeCookie(basicPureToken)
+	storeToken2Session(basicPureToken)
+	return pureToken
 }
 
-func ParseToken(basicRawToken string) (uid int, rawToken string) {
+func ParseToken(basicRawToken string) (uid int, pureToken string) {
 	content := BasicAuthDecode(basicRawToken)
-	uid, rawToken = ParseBasicAuth(content)
-	return uid, rawToken
+	uid, pureToken = ParseBasicAuth(content)
+	return uid, pureToken
 }
 
-func CheckRawToken(uid int, rawToken string) bool {
-	userDao:=NewUserDao(pg_rbac)
+func CheckPureToken(uid int, rawToken string) bool {
+	userDao := NewUserDao(pg_rbac)
 	user := userDao.GetById(uid)
 	tokenSaltHelper := NewUserTokenSaltHelper(user)
 	token := tokenSaltHelper.Encode(rawToken)
