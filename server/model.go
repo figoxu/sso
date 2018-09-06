@@ -134,6 +134,10 @@ func (p *UserDao) Update(user User, fields ...string) {
 	p.db.Model(&user).Select(fields).Update(dataMap)
 }
 
+func (p *UserDao) Save(user *User)  {
+	p.db.Save(&user)
+}
+
 type UserGroup struct {
 	Id        int
 	Name      string
