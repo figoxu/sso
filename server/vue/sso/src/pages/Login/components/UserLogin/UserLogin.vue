@@ -68,11 +68,19 @@
                 this.$refs['form'].validate((valid) => {
                     if (valid) {
                         Api.login(that.user.username, that.user.password, function (data) {
-                            console.log("调用成功", data)
-                        });
-                        this.$message({
-                            message: '登录成功',
-                            type: 'success',
+                            console.log("调用成功", data);
+                            if(data.SuccessFlag){
+                                that.$message({
+                                    message: '登录成功',
+                                    type: 'success',
+                                });
+                                window.location.href = data.JumpUrl;
+                            }else{
+                                that.$message({
+                                    message: '账号密码错误',
+                                    type: 'error',
+                                });
+                            }
                         });
                     }
                 });

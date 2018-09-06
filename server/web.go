@@ -24,19 +24,24 @@ func mount() *gin.Engine {
 	{
 		login := sso.Group("/login")
 		{
-			login.GET("/redirect/:from", h_redirect)
+			login.GET("/redirect", h_redirect)
 			login.POST("/exc", h_login)
 		}
 	}
 	return r
 }
 
+//curl http://sso.localhost/sso/login/redirect?from=https%3a%2f%2fgithub.com%2ffigoxu%2fsso
 func h_redirect(ctx *gin.Context) {
-	env := ctx.MustGet("env").(*Env)
-	from := env.ph.String("from")
+	vs:=ctx.Request.URL.Query()
+	from:=vs.Get("from")
+	fmt.Println(">>>>>>>>>")
+	fmt.Println(from)
+	fmt.Println("<<<<<<<<<")
 	saveFromAddress := func() {
 		session := sessions.Default(ctx)
 		session.Set(SSO_FROM, from)
+		session.Save();
 	}
 	checkLogin := func() bool {
 		basicRawToken, err := ctx.Cookie(SSO_TOKEN_COOKIE)
@@ -56,15 +61,18 @@ func h_redirect(ctx *gin.Context) {
 	}
 	saveFromAddress()
 	jumpLoc := from
-	if checkLogin() && jumpLoc == "" {
-		jumpLoc = sysEnv.welcome_page
-	} else {
-		jumpLoc = sysEnv.login_page
+	if jumpLoc==""{
+		if checkLogin(){
+			jumpLoc = sysEnv.welcome_page
+		} else {
+			jumpLoc = sysEnv.login_page
+		}
 	}
-	ctx.Redirect(http.StatusOK, sysEnv.welcome_page)
+	ctx.Redirect(http.StatusFound, jumpLoc)
 	return
 }
 
+//curl http://sso.localhost/sso/login/exc -d "username=figo&password=hello"
 func h_login(c *gin.Context) {
 	type LoginResp struct {
 		SuccessFlag bool

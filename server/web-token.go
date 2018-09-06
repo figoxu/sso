@@ -55,6 +55,7 @@ func (p *TokenHelper) NewToken(uid int) string {
 	storeToken2Session := func(basicRawToken string) {
 		session := sessions.Default(p.ctx)
 		session.Set(SSO_BASIC_RAW_TOKEN, basicRawToken)
+		session.Save()
 	}
 	rawToken := genToken()
 	basicRawToken := BasicAuthEncode(NewBasicAuthStr(uid, rawToken))
