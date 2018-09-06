@@ -1,10 +1,20 @@
 import axios from "axios";
 
+function transJson2From(data) {
+    // Do whatever you want to transform the data
+    let ret = ''
+    for (let it in data) {
+        ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+    }
+    return ret
+}
+
 const Api = {
     login(name,password,callback){
         axios({
             method: "POST",
             url: "/sso/login/exc",
+            transformRequest: [transJson2From],
             data: {
                 username: name,
                 password: password
