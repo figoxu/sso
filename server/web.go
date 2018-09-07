@@ -8,8 +8,7 @@ import (
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-contrib/sessions"
 	"fmt"
-	"net/url"
-	"github.com/quexer/utee"
+	"github.com/figoxu/Figo"
 )
 
 func initWeb(port string) {
@@ -84,47 +83,41 @@ func h_login(c *gin.Context) {
 	env := c.MustGet("env").(*Env)
 	fh := env.fh
 	username, password := fh.String("username"), fh.String("password")
-	validate := func() bool {
+	validate := func() (bool,string) {
 		if username == "" || password == "" {
-			return false
+			return false,""
 		}
 		user := NewUserDao(pg_rbac).GetByLoginName(username)
 		passwordSaltHelp := NewUserPasswordSaltHelper(user)
 		if user.Id <= 0 || password != passwordSaltHelp.Decode(user.Password) {
-			return false;
+			return false,""
 		}
 		th := NewTokenHelper(c)
-		th.NewToken(user.Id)
-		return true
+		basicPureToken:=th.NewToken(user.Id)
+		return true,basicPureToken
 	}
-	if !validate() {
+	successFlag,basicPureToken:=validate()
+	if !successFlag {
 		resp.SuccessFlag = false
 		c.JSON(http.StatusOK, resp)
 		return
 	}
 	resp.SuccessFlag = true
-	resp.JumpUrl = jumpUrl(sessions.Default(c))
+	resp.JumpUrl = jumpUrl(sessions.Default(c),basicPureToken)
 	c.JSON(http.StatusOK, resp)
 }
 
-func jumpUrl(session sessions.Session) (redirect_address string) {
+func jumpUrl(session sessions.Session,basicPureToken string) (redirect_address string) {
 	v := session.Get(SSO_FROM)
 	if v == nil {
 		redirect_address = sysEnv.welcome_page
 	} else {
 		redirect_address = fmt.Sprint(v)
+		redirect_address = Figo.UrlAppendParam(redirect_address,"basic_pure_token",basicPureToken)
 	}
 	return redirect_address
 }
 
-func urlAppendParam(rawUrl, k, v string) string {
-	reqURI, err := url.ParseRequestURI(rawUrl)
-	utee.Chk(err)
-	vs := reqURI.Query()
-	vs.Set(k, v)
-	reqURI.RawQuery = vs.Encode()
-	return reqURI.String()
-}
 
 type Env struct {
 	fh *gh.FormHelper
