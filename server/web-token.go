@@ -5,11 +5,9 @@ import (
 	"encoding/hex"
 	"github.com/pborman/uuid"
 	"github.com/figoxu/Figo"
-	"net/http"
 	"github.com/quexer/utee"
 	"fmt"
 	"strings"
-	"github.com/gin-contrib/sessions"
 	"encoding/base64"
 )
 
@@ -42,26 +40,9 @@ func (p *TokenHelper) NewToken(uid int) string {
 		p.userDao.Update(user, Figo.SnakeStrings("Token", "TokenSalt")...)
 		return pureToken
 	}
-	writeCookie := func(basicRawToken string) {
-		cookie := &http.Cookie{
-			Name:   SSO_TOKEN_COOKIE,
-			Value:  basicRawToken,
-			Path:   "/",
-			Domain: sysEnv.domain,
-			MaxAge: 60 * 60 * 24,
-		}
-		http.SetCookie(p.ctx.Writer, cookie)
-	}
-	storeToken2Session := func(basicRawToken string) {
-		session := sessions.Default(p.ctx)
-		session.Set(SSO_BASIC_PURE_TOKEN, basicRawToken)
-		session.Save()
-	}
 	pureToken := genToken()
 	basicPureToken := BasicAuthEncode(NewBasicAuthStr(uid, pureToken))
-	writeCookie(basicPureToken)
-	storeToken2Session(basicPureToken)
-	return pureToken
+	return basicPureToken
 }
 
 func ParseToken(basicRawToken string) (uid int, pureToken string) {

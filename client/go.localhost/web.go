@@ -21,6 +21,7 @@ func mount() *gin.Engine {
 	r.HTMLRender = pongo2gin.Default()
 	store := cookie.NewStore([]byte("xujh945@qq.com"))
 	r.Use(sessions.Sessions("figoxu", store))
+	r.Use(midSSo)
 	r.GET("/main",h_main)
 	return r
 }

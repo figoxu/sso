@@ -9,6 +9,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"fmt"
 	"github.com/figoxu/Figo"
+	"github.com/figoxu/sso/common"
 )
 
 func initWeb(port string) {
@@ -35,7 +36,7 @@ func mount() *gin.Engine {
 //curl http://sso.localhost/sso/login/redirect?from=https%3a%2f%2fgithub.com%2ffigoxu%2fsso
 func h_redirect(ctx *gin.Context) {
 	vs := ctx.Request.URL.Query()
-	from := vs.Get("from")
+	from := vs.Get(common.SSO_FROM_PARAM)
 	fmt.Println(">>>>>>>>>")
 	fmt.Println(from)
 	fmt.Println("<<<<<<<<<")
@@ -83,41 +84,42 @@ func h_login(c *gin.Context) {
 	env := c.MustGet("env").(*Env)
 	fh := env.fh
 	username, password := fh.String("username"), fh.String("password")
-	validate := func() (bool,string) {
+	validate := func() (bool, string) {
 		if username == "" || password == "" {
-			return false,""
+			return false, ""
 		}
 		user := NewUserDao(pg_rbac).GetByLoginName(username)
 		passwordSaltHelp := NewUserPasswordSaltHelper(user)
 		if user.Id <= 0 || password != passwordSaltHelp.Decode(user.Password) {
-			return false,""
+			return false, ""
 		}
 		th := NewTokenHelper(c)
-		basicPureToken:=th.NewToken(user.Id)
-		return true,basicPureToken
+		basicPureToken := th.NewToken(user.Id)
+		common.WriteCookie(c, basicPureToken, sysEnv.domain)
+		common.StoreToken2Session(c, basicPureToken)
+		return true, basicPureToken
 	}
-	successFlag,basicPureToken:=validate()
+	successFlag, basicPureToken := validate()
 	if !successFlag {
 		resp.SuccessFlag = false
 		c.JSON(http.StatusOK, resp)
 		return
 	}
 	resp.SuccessFlag = true
-	resp.JumpUrl = jumpUrl(sessions.Default(c),basicPureToken)
+	resp.JumpUrl = jumpUrl(sessions.Default(c), basicPureToken)
 	c.JSON(http.StatusOK, resp)
 }
 
-func jumpUrl(session sessions.Session,basicPureToken string) (redirect_address string) {
+func jumpUrl(session sessions.Session, basicPureToken string) (redirect_address string) {
 	v := session.Get(SSO_FROM)
 	if v == nil {
 		redirect_address = sysEnv.welcome_page
 	} else {
 		redirect_address = fmt.Sprint(v)
-		redirect_address = Figo.UrlAppendParam(redirect_address,"basic_pure_token",basicPureToken)
+		redirect_address = Figo.UrlAppendParam(redirect_address, common.SSO_TOKEN_PARAM, basicPureToken)
 	}
 	return redirect_address
 }
-
 
 type Env struct {
 	fh *gh.FormHelper
