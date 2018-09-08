@@ -10,6 +10,8 @@ import (
 	"fmt"
 	"github.com/figoxu/Figo"
 	"github.com/figoxu/sso/common"
+	"github.com/quexer/utee"
+	"net/url"
 )
 
 func initWeb(port string) {
@@ -106,18 +108,22 @@ func h_login(c *gin.Context) {
 		return
 	}
 	resp.SuccessFlag = true
-	resp.JumpUrl = jumpUrl(sessions.Default(c), basicPureToken)
+	redirectUrl := jumpUrl(sessions.Default(c), basicPureToken)
+	resp.JumpUrl = url.QueryEscape(redirectUrl)
 	c.JSON(http.StatusOK, resp)
 }
 
 func jumpUrl(session sessions.Session, basicPureToken string) (redirect_address string) {
 	v := session.Get(SSO_FROM)
 	if v == nil {
-		redirect_address = sysEnv.welcome_page
-	} else {
-		redirect_address = fmt.Sprint(v)
-		redirect_address = Figo.UrlAppendParam(redirect_address, common.SSO_TOKEN_PARAM, basicPureToken)
+		return sysEnv.welcome_page
 	}
+	redirect_address = fmt.Sprint(v)
+	redirect_address, err := url.QueryUnescape(redirect_address)
+	utee.Chk(err)
+	log.Println("@Redirect_Adress:", redirect_address, " @PARAM:", common.SSO_TOKEN_PARAM, " @V:", basicPureToken)
+	redirect_address = Figo.UrlAppendParam(redirect_address, common.SSO_TOKEN_PARAM, basicPureToken)
+	log.Println("@RESULT_AFTER_APPEND: ", redirect_address)
 	return redirect_address
 }
 

@@ -40,18 +40,18 @@ func midSSo(c *gin.Context) {
 		req := &sso.LoginInfoReq{
 			BasicRawToken: basic_pure_token,
 		}
-		rsp,err:= ssoServiceClient.GetLoginInfo(context.Background(), req)
-		if err!=nil || rsp.User.Id < 0 {
+		rsp, err := ssoServiceClient.GetLoginInfo(context.Background(), req)
+		if err != nil || rsp.User.Id < 0 {
 			return false
 		}
-		saveTokenUser(basic_pure_token,rsp)
+		saveTokenUser(basic_pure_token, rsp)
 		return true
 	}
 
 	autoSaveToken()
 	if !authCode() {
-		rurl:=Figo.UrlAppendParam(sysEnv.sso_redirect_url,common.SSO_FROM_PARAM,urlEncode())
-		c.Redirect(http.StatusFound,rurl)
+		rurl := Figo.UrlAppendParam(sysEnv.sso_redirect_url, common.SSO_FROM_PARAM, urlEncode())
+		c.Redirect(http.StatusFound, rurl)
 		return
 	} else {
 		c.Next()
@@ -64,8 +64,9 @@ func saveTokenUser(basicPureToken string, user *sso.LoginInfoRsp) {
 
 func getTokenUser(basicPureToken string) (user *sso.LoginInfoRsp) {
 	v := sysEnv.token_cache.Get(basicPureToken)
+	if v == nil {
+		return nil
+	}
 	user = v.(*sso.LoginInfoRsp)
 	return user
 }
-
-

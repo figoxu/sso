@@ -74,7 +74,9 @@
                                     message: '登录成功',
                                     type: 'success',
                                 });
-                                window.location.href = data.JumpUrl;
+                                var jumpUrl = decodeURIComponent(data.JumpUrl)
+                                alert(jumpUrl);
+                                window.location.href = jumpUrl;
                             }else{
                                 that.$message({
                                     message: '账号密码错误',
