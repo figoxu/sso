@@ -2,8 +2,10 @@ package me.figoxu.sso.filter;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import me.figoxu.sso.cache.SsoCache;
 import me.figoxu.sso.grpc.Api;
 import me.figoxu.sso.grpc.SsoServiceGrpc;
+import me.figoxu.sso.util.SpringContextUtil;
 import me.figoxu.sso.web.MainController;
 import org.apache.log4j.Logger;
 
@@ -84,13 +86,8 @@ public class SsoFilter implements Filter {
         if (token == null || token.length() <= 0) {
             return false;
         }
-        ManagedChannel channel = ManagedChannelBuilder.forAddress(GRPC_HOST, GRPC_PORT)
-                .usePlaintext(true)
-                .build();
-        SsoServiceGrpc.SsoServiceBlockingStub ssoServiceBlockingStub = SsoServiceGrpc.newBlockingStub(channel);
-        Api.LoginInfoReq loginInfoReq = Api.LoginInfoReq.newBuilder().setBasicRawToken("").build();
-        Api.LoginInfoRsp resp = ssoServiceBlockingStub.getLoginInfo(loginInfoReq);
-        Api.User user = resp.getUser();
+        SsoCache ssoCache = SpringContextUtil.getBean(SsoCache.class);
+        Api.User user = ssoCache.getUser(token);
         if (user == null || user.getId() <= 0) {
             return false;
         }
