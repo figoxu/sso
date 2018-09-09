@@ -10,8 +10,8 @@ import (
 const (
 	SSO_BASIC_PURE_TOKEN = "basic_raw_token"
 	SSO_TOKEN_COOKIE     = "sso"
-	SSO_TOKEN_PARAM = "basic_pure_token"
-	SSO_FROM_PARAM = "from"
+	SSO_TOKEN_PARAM      = "basic_pure_token"
+	SSO_FROM_PARAM       = "from"
 )
 
 func WriteCookie(c *gin.Context, basicPureToken, domain string) {
@@ -32,30 +32,43 @@ func StoreToken2Session(c *gin.Context, basicPureToken string) {
 }
 
 func GetBasicPureToken(c *gin.Context) (basicPureToken string) {
-	getTokenByURL := func()string{
+	successFlag := false
+	logPrint := func(message string) {
+		if successFlag {
+			return
+		}
+		if basicPureToken != "" {
+			successFlag = true
+			fmt.Println(message)
+		}
+	}
+	getTokenByURL := func() string {
 		vs := c.Request.URL.Query()
 		return vs.Get(SSO_TOKEN_PARAM);
 	}
-	getTokenByCookie:= func()string{
-		if v,err:=c.Cookie(SSO_TOKEN_COOKIE);err==nil{
+	getTokenByCookie := func() string {
+		if v, err := c.Cookie(SSO_TOKEN_COOKIE); err == nil {
 			return v
 		}
 		return ""
 	}
-	getTokenBySession:= func() string{
+	getTokenBySession := func() string {
 		session := sessions.Default(c)
-		s_token:=session.Get(SSO_BASIC_PURE_TOKEN)
-		if s_token!=nil {
+		s_token := session.Get(SSO_BASIC_PURE_TOKEN)
+		if s_token != nil {
 			return fmt.Sprint(s_token)
 		}
 		return ""
 	}
 	basicPureToken = getTokenByURL()
-	if basicPureToken=="" {
+	logPrint("从URL获取Token")
+	if basicPureToken == "" {
 		basicPureToken = getTokenByCookie()
 	}
-	if basicPureToken==""{
+	logPrint("从COOKIE获取Token")
+	if basicPureToken == "" {
 		basicPureToken = getTokenBySession()
 	}
+	logPrint("从SESSION获取Token")
 	return basicPureToken
 }
