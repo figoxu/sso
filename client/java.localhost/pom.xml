@@ -11,6 +11,11 @@
 
     <repositories>
         <repository>
+            <id>central</id>
+            <name>mvnrepository</name>
+            <url>http://central.maven.org/maven2/</url>
+        </repository>
+        <repository>
             <id>52north.org</id>
             <name>52north.org</name>
             <url>http://52north.org/maven/repo/releases/</url>
@@ -24,22 +29,37 @@
             <url>http://jcenter.bintray.com</url>
         </repository>
     </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>jcenter-snapshots</id>
-            <name>jcenter</name>
-            <url>http://oss.jfrog.org/artifactory/oss-snapshot-local/</url>
-        </pluginRepository>
-        <pluginRepository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>jcenter-releases</id>
-            <name>jcenter</name>
-            <url>http://jcenter.bintray.com</url>
-        </pluginRepository>
-    </pluginRepositories>
     <dependencies>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-netty-shaded</artifactId>
+            <version>1.14.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-protobuf</artifactId>
+            <version>1.14.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-stub</artifactId>
+            <version>1.14.0</version>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>io.grpc</groupId>-->
+            <!--<artifactId>grpc-netty-shaded</artifactId>-->
+            <!--<version>1.14.0</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>io.grpc</groupId>-->
+            <!--<artifactId>grpc-protobuf</artifactId>-->
+            <!--<version>1.14.0</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>io.grpc</groupId>-->
+            <!--<artifactId>grpc-stub</artifactId>-->
+            <!--<version>1.14.0</version>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>

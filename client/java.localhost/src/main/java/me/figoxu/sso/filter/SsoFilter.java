@@ -1,5 +1,9 @@
 package me.figoxu.sso.filter;
 
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+import me.figoxu.sso.grpc.Api;
+import me.figoxu.sso.grpc.SsoServiceGrpc;
 import me.figoxu.sso.web.MainController;
 import org.apache.log4j.Logger;
 
@@ -22,6 +26,9 @@ public class SsoFilter implements Filter {
     public static final String SSO_TOKEN_PARAM = "basic_pure_token";
     public static final String SSO_FROM_PARAM = "from";
     public static final String MINE_DOMAIN = "java.localhost";
+    public static final String GRPC_HOST = "127.0.0.1";
+    public static final Integer GRPC_PORT = 8084;
+
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -77,7 +84,16 @@ public class SsoFilter implements Filter {
         if (token == null || token.length() <= 0) {
             return false;
         }
-        //todo check with grcp
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(GRPC_HOST, GRPC_PORT)
+                .usePlaintext(true)
+                .build();
+        SsoServiceGrpc.SsoServiceBlockingStub ssoServiceBlockingStub = SsoServiceGrpc.newBlockingStub(channel);
+        Api.LoginInfoReq loginInfoReq = Api.LoginInfoReq.newBuilder().setBasicRawToken("").build();
+        Api.LoginInfoRsp resp = ssoServiceBlockingStub.getLoginInfo(loginInfoReq);
+        Api.User user = resp.getUser();
+        if (user == null || user.getId() <= 0) {
+            return false;
+        }
         return true;
     }
 
@@ -88,7 +104,7 @@ public class SsoFilter implements Filter {
         autoSaveToken(req, rsp);
         if (!isLogin(req, rsp)) {
             resolveRedirectUrl(req, rsp);
-        }else{
+        } else {
             filterChain.doFilter(servletRequest, servletResponse);
         }
     }
