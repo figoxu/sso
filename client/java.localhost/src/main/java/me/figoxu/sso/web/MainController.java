@@ -18,6 +18,8 @@ import java.io.PrintWriter;
 public class MainController {
     Logger logger = Logger.getLogger(MainController.class);
 
+
+    //http://jsp.localhost/main/welcome
     @RequestMapping(value = "/welcome", method = RequestMethod.GET)
     public ResponseEntity main() throws Exception {
         HttpServletResponse response = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getResponse();

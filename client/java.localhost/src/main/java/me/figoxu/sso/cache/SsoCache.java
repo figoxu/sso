@@ -17,7 +17,7 @@ public class SsoCache {
                 .usePlaintext(true)
                 .build();
         SsoServiceGrpc.SsoServiceBlockingStub ssoServiceBlockingStub = SsoServiceGrpc.newBlockingStub(channel);
-        Api.LoginInfoReq loginInfoReq = Api.LoginInfoReq.newBuilder().setBasicRawToken("").build();
+        Api.LoginInfoReq loginInfoReq = Api.LoginInfoReq.newBuilder().setBasicRawToken(token).build();
         Api.LoginInfoRsp resp = ssoServiceBlockingStub.getLoginInfo(loginInfoReq);
         Api.User user = resp.getUser();
         return user;

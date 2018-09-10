@@ -68,12 +68,16 @@ public class SsoFilter implements Filter {
             System.out.println("GET TOKEN FROM REQUEST");
             return token;
         }
-        for (Cookie cookie : req.getCookies()) {
-            if (cookie.getName().equals(SSO_TOKEN_COOKIE)) {
-                token = cookie.getValue();
-                if (token != null && token.length() > 0) {
-                    System.out.println("GET TOKEN FROM COOKIE");
-                    return token;
+        Cookie[] cookies = req.getCookies();
+        System.out.println(cookies);
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(SSO_TOKEN_COOKIE)) {
+                    token = cookie.getValue();
+                    if (token != null && token.length() > 0) {
+                        System.out.println("GET TOKEN FROM COOKIE");
+                        return token;
+                    }
                 }
             }
         }
