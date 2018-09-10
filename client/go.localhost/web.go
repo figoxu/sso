@@ -20,11 +20,12 @@ func initWeb(port string) {
 
 func mount() *gin.Engine {
 	r := gin.Default()
-	r.Use(static.Serve("/dist", static.LocalFile("./dist", true)))
+	ssoMid := common.BuildMid(sysEnv.domain, sysEnv.sso_redirect_url, sysEnv.grpc_client, sysEnv.token_cache)
+	r.Use(ssoMid, static.Serve("/dist", static.LocalFile("./dist", true)))
 	r.HTMLRender = pongo2gin.Default()
 	store := cookie.NewStore([]byte("xujh945@qq.com"))
 	r.Use(sessions.Sessions("figoxu", store))
-	r.Use(common.BuildMid(sysEnv.domain, sysEnv.sso_redirect_url, sysEnv.grpc_client, sysEnv.token_cache))
+	r.Use(ssoMid)
 	r.GET("/main", h_main)
 	return r
 }
