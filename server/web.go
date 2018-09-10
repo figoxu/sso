@@ -8,10 +8,9 @@ import (
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-contrib/sessions"
 	"fmt"
-	"github.com/figoxu/Figo"
 	"github.com/figoxu/sso/common"
-	"github.com/quexer/utee"
 	"net/url"
+	jsonp "github.com/jim3ma/gin-jsonp"
 )
 
 func initWeb(port string) {
@@ -31,6 +30,7 @@ func mount() *gin.Engine {
 		{
 			login.GET("/redirect", h_redirect)
 			login.POST("/exc", h_login)
+			login.GET("/token", jsonp.Handler(), h_check_login)
 		}
 	}
 	return r
@@ -38,39 +38,8 @@ func mount() *gin.Engine {
 
 //curl http://sso.localhost/sso/login/redirect?from=https%3a%2f%2fgithub.com%2ffigoxu%2fsso
 func h_redirect(ctx *gin.Context) {
-	vs := ctx.Request.URL.Query()
-	from := vs.Get(common.SSO_FROM_PARAM)
-	fmt.Println(">>>>>>>>>")
-	fmt.Println(from)
-	fmt.Println("<<<<<<<<<")
-	saveFromAddress := func() {
-		session := sessions.Default(ctx)
-		session.Set(SSO_FROM, from)
-		session.Save();
-	}
-	basicPureToken := common.GetBasicPureToken(ctx)
-	checkLogin := func() bool {
-		if basicPureToken == "" {
-			return false;
-		}
-		fmt.Println("@BAISC_PURE_TOKEN:", basicPureToken)
-		uid, pureToken := ParseToken(basicPureToken)
-		return CheckPureToken(uid, pureToken)
-	}
-	saveFromAddress()
-	jumpLoc := sysEnv.login_page
-	if checkLogin() {
-		fmt.Println("@登陆成功")
-		if from != "" {
-			from, _ = url.QueryUnescape(from)
-			jumpLoc = Figo.UrlAppendParam(from, common.SSO_TOKEN_PARAM, basicPureToken)
-		} else {
-			jumpLoc = sysEnv.welcome_page
-		}
-	} else {
-		fmt.Println("@自动登陆失败")
-	}
-	fmt.Println(">>>>>  跳转到服务：", jumpLoc)
+	saveTokenFromAddress(ctx)
+	jumpLoc := jumpUrl(ctx)
 	ctx.Redirect(http.StatusFound, jumpLoc)
 	return
 }
@@ -101,30 +70,28 @@ func h_login(c *gin.Context) {
 		common.StoreToken2Session(c, basicPureToken)
 		return true, basicPureToken
 	}
-	successFlag, basicPureToken := validate()
+	successFlag, _ := validate()
 	if !successFlag {
 		resp.SuccessFlag = false
 		c.JSON(http.StatusOK, resp)
 		return
 	}
 	resp.SuccessFlag = true
-	redirectUrl := jumpUrl(sessions.Default(c), basicPureToken)
+	redirectUrl := jumpUrl(c)
 	resp.JumpUrl = url.QueryEscape(redirectUrl)
 	c.JSON(http.StatusOK, resp)
 }
 
-func jumpUrl(session sessions.Session, basicPureToken string) (redirect_address string) {
-	v := session.Get(SSO_FROM)
-	if v == nil {
-		return sysEnv.welcome_page
-	}
-	redirect_address = fmt.Sprint(v)
-	redirect_address, err := url.QueryUnescape(redirect_address)
-	utee.Chk(err)
-	log.Println("@Redirect_Adress:", redirect_address, " @PARAM:", common.SSO_TOKEN_PARAM, " @V:", basicPureToken)
-	redirect_address = Figo.UrlAppendParam(redirect_address, common.SSO_TOKEN_PARAM, basicPureToken)
-	log.Println("@RESULT_AFTER_APPEND: ", redirect_address)
-	return redirect_address
+//curl http://sso.localhost/sso/login/token?from=https%3a%2f%2fgithub.com%2ffigoxu%2fsso
+func h_check_login(ctx *gin.Context) {
+	loginFlag := checkLogin(ctx)
+	jumpLoc := jumpUrl(ctx)
+	basicPureToken := common.GetBasicPureToken(ctx)
+	ctx.JSON(http.StatusOK, gin.H{
+		"loginFlag":      loginFlag,
+		"jumpLoc":        jumpLoc,
+		"basicPureToken": basicPureToken,
+	})
 }
 
 type Env struct {
