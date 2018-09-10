@@ -9,6 +9,7 @@ import (
 	"gitlab.com/go-box/pongo2gin"
 	"github.com/flosch/pongo2"
 	"github.com/figoxu/sso/common"
+	"github.com/gin-contrib/static"
 )
 
 func initWeb(port string) {
@@ -19,6 +20,7 @@ func initWeb(port string) {
 
 func mount() *gin.Engine {
 	r := gin.Default()
+	r.Use(static.Serve("/dist", static.LocalFile("./dist", true)))
 	r.HTMLRender = pongo2gin.Default()
 	store := cookie.NewStore([]byte("xujh945@qq.com"))
 	r.Use(sessions.Sessions("figoxu", store))
