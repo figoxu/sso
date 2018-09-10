@@ -8,6 +8,7 @@ import (
 	"log"
 	"gitlab.com/go-box/pongo2gin"
 	"github.com/flosch/pongo2"
+	"github.com/figoxu/sso/common"
 )
 
 func initWeb(port string) {
@@ -21,14 +22,11 @@ func mount() *gin.Engine {
 	r.HTMLRender = pongo2gin.Default()
 	store := cookie.NewStore([]byte("xujh945@qq.com"))
 	r.Use(sessions.Sessions("figoxu", store))
-	r.Use(midSSo)
-	r.GET("/main",h_main)
+	r.Use(common.BuildMid(sysEnv.domain, sysEnv.sso_redirect_url, sysEnv.grpc_client, sysEnv.token_cache))
+	r.GET("/main", h_main)
 	return r
 }
 
-func h_main(c *gin.Context){
+func h_main(c *gin.Context) {
 	c.HTML(200, "main.html", pongo2.Context{})
 }
-
-
-
