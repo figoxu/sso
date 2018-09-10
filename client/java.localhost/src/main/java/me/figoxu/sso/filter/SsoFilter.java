@@ -14,6 +14,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 /**
@@ -65,7 +66,8 @@ public class SsoFilter implements Filter {
     private String getBasicPureToken(HttpServletRequest req, HttpServletResponse rsp) throws IOException {
         String token = req.getParameter(SSO_TOKEN_PARAM);
         if (token != null && token.length() > 0) {
-            System.out.println("GET TOKEN FROM REQUEST");
+            token = URLDecoder.decode(token,"UTF-8");
+            System.out.println("GET TOKEN FROM REQUEST @token:"+token);
             return token;
         }
         Cookie[] cookies = req.getCookies();
@@ -91,7 +93,9 @@ public class SsoFilter implements Filter {
             return false;
         }
         SsoCache ssoCache = SpringContextUtil.getBean(SsoCache.class);
+        System.out.println("根据token: "+token+" 去获取用户信息 : ");
         Api.User user = ssoCache.getUser(token);
+        System.out.println("@user："+user);
         if (user == null || user.getId() <= 0) {
             return false;
         }

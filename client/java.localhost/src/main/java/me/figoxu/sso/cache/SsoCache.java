@@ -12,14 +12,19 @@ import org.springframework.cache.annotation.Cacheable;
 public class SsoCache {
     @Cacheable(value = "sso_cache", key = "'user_token_'+#token")
     public Api.User getUser(String token) {
-        System.out.println(">>>>通过GRPC获取User信息");
-        ManagedChannel channel = ManagedChannelBuilder.forAddress(SsoFilter.GRPC_HOST, SsoFilter.GRPC_PORT)
-                .usePlaintext(true)
-                .build();
-        SsoServiceGrpc.SsoServiceBlockingStub ssoServiceBlockingStub = SsoServiceGrpc.newBlockingStub(channel);
-        Api.LoginInfoReq loginInfoReq = Api.LoginInfoReq.newBuilder().setBasicRawToken(token).build();
-        Api.LoginInfoRsp resp = ssoServiceBlockingStub.getLoginInfo(loginInfoReq);
-        Api.User user = resp.getUser();
-        return user;
+        System.out.println(">>>>通过GRPC获取User信息 @token:" + token);
+        try {
+            ManagedChannel channel = ManagedChannelBuilder.forAddress(SsoFilter.GRPC_HOST, SsoFilter.GRPC_PORT)
+                    .usePlaintext(true)
+                    .build();
+            SsoServiceGrpc.SsoServiceBlockingStub ssoServiceBlockingStub = SsoServiceGrpc.newBlockingStub(channel);
+            Api.LoginInfoReq loginInfoReq = Api.LoginInfoReq.newBuilder().setBasicRawToken(token).build();
+            Api.LoginInfoRsp resp = ssoServiceBlockingStub.getLoginInfo(loginInfoReq);
+            Api.User user = resp.getUser();
+            return user;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
     }
 }

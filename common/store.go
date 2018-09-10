@@ -39,7 +39,7 @@ func GetBasicPureToken(c *gin.Context) (basicPureToken string) {
 		}
 		if basicPureToken != "" {
 			successFlag = true
-			fmt.Println(message)
+			fmt.Println(message,":",basicPureToken)
 		}
 	}
 	getTokenByURL := func() string {

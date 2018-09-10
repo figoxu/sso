@@ -19,6 +19,7 @@ func main() {
 	cfg_core, err := config.NewConfig("ini", "conf.ini")
 	utee.Chk(err)
 	sysEnv.cookie_domain = cfg_core.String("http::cookie_domain")
+	fmt.Println(sysEnv.cookie_domain)
 	sysEnv.welcome_page = cfg_core.String("http::welcome_page")
 	sysEnv.login_page = cfg_core.String("http::login_page")
 	fmt.Println("->数据库")

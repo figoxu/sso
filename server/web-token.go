@@ -111,6 +111,7 @@ func ParseBasicAuth(auth string) (id int, token string) {
 	}
 	id, err := Figo.TpInt(ary[0])
 	utee.Chk(err)
+	token = ary[1]
 	return id, token
 }
 

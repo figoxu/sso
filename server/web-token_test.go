@@ -4,6 +4,7 @@ import (
 	"testing"
 	"log"
 	"github.com/figoxu/Figo"
+	"fmt"
 )
 
 func TestNewSaltHelper(t *testing.T) {
@@ -33,4 +34,13 @@ func TestNewUserPasswordSaltHelper(t *testing.T) {
 	saltHelper:=NewUserPasswordSaltHelper(u)
 	pwd:=saltHelper.Decode(u.Password)
 	log.Println("PASSWORD IS : ",pwd)
+}
+
+
+//MjplNmY5OTE2NS1lYzMxLTRiMTctOWRlNS1mNDI0YzgzMjZiYjg=
+
+func TestParseToken(t *testing.T){
+	uid,token:=ParseToken("MjplNmY5OTE2NS1lYzMxLTRiMTctOWRlNS1mNDI0YzgzMjZiYjg=")
+	fmt.Println(uid)
+	fmt.Println(token)
 }

@@ -47,31 +47,29 @@ func h_redirect(ctx *gin.Context) {
 		session.Set(SSO_FROM, from)
 		session.Save();
 	}
+	basicPureToken := common.GetBasicPureToken(ctx)
 	checkLogin := func() bool {
-		basicPureToken, err := ctx.Cookie(SSO_TOKEN_COOKIE)
-		if err != nil {
-			return false
-		}
 		if basicPureToken == "" {
-			session := sessions.Default(ctx)
-			if brt := session.Get(SSO_BASIC_PURE_TOKEN); brt == nil {
-				return false
-			} else {
-				basicPureToken = fmt.Sprint(brt)
-			}
+			return false;
 		}
+		fmt.Println("@BAISC_PURE_TOKEN:", basicPureToken)
 		uid, pureToken := ParseToken(basicPureToken)
 		return CheckPureToken(uid, pureToken)
 	}
 	saveFromAddress()
 	jumpLoc := sysEnv.login_page
 	if checkLogin() {
+		fmt.Println("@登陆成功")
 		if from != "" {
-			jumpLoc = from
+			from, _ = url.QueryUnescape(from)
+			jumpLoc = Figo.UrlAppendParam(from, common.SSO_TOKEN_PARAM, basicPureToken)
 		} else {
 			jumpLoc = sysEnv.welcome_page
 		}
+	} else {
+		fmt.Println("@自动登陆失败")
 	}
+	fmt.Println(">>>>>  跳转到服务：", jumpLoc)
 	ctx.Redirect(http.StatusFound, jumpLoc)
 	return
 }
@@ -97,7 +95,8 @@ func h_login(c *gin.Context) {
 		}
 		th := NewTokenHelper(c)
 		basicPureToken := th.NewToken(user.Id)
-		common.WriteCookie(c, basicPureToken, sysEnv.domain)
+		fmt.Println(">>>>>>   Write @Domain:", sysEnv.cookie_domain)
+		common.WriteCookie(c, basicPureToken, sysEnv.cookie_domain)
 		common.StoreToken2Session(c, basicPureToken)
 		return true, basicPureToken
 	}

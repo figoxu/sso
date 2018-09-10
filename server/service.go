@@ -7,6 +7,7 @@ import (
 	"github.com/figoxu/sso/pb/sso"
 	"context"
 	"github.com/pkg/errors"
+	"log"
 )
 
 var (
@@ -35,8 +36,11 @@ func (p *SsoService) GetLoginInfo(ctx context.Context, req *sso.LoginInfoReq) (r
 		return nil, errors.New("bad param")
 	}
 
+	//uid, pureToken := ParseToken(basicPureToken)
+	//return CheckPureToken(uid, pureToken)
 	uid, rawToken := ParseToken(req.BasicRawToken)
-	if CheckPureToken(uid, rawToken) {
+	log.Println("  >>>>  @UID: ",uid,"  @RawToken: ",rawToken)
+	if !CheckPureToken(uid, rawToken) {
 		return nil, errors.New("not auth")
 	}
 	userDao, resourceDao, userGroupDao := NewUserDao(pg_rbac), NewResourceDao(pg_rbac), NewUserGroupDao(pg_rbac)
