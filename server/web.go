@@ -22,9 +22,7 @@ func initWeb(port string) {
 
 func mount() *gin.Engine {
 	r := gin.Default()
-	r.Use(func(*gin.Context){
-		defer Figo.Catch()
-	})
+	r.Use(gin.Recovery())
 	store := cookie.NewStore([]byte("xujh945@qq.com"))
 	r.Use(sessions.Sessions("figoxu", store))
 	sso := r.Group("/sso", m_gh)
