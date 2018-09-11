@@ -68,6 +68,10 @@ func BuildMid(domain, sso_redirect_url string, grpc_client *grpc.ClientConn, tok
 			rurl := Figo.UrlAppendParam(sso_redirect_url, SSO_FROM_PARAM, urlEncode())
 			c.Redirect(http.StatusFound, rurl)
 			return
+		} else if Figo.UrlExistParam(c.Request.URL.String(), SSO_TOKEN_PARAM) {
+			rurl := Figo.UrlRemoveParam(c.Request.URL.String(), SSO_TOKEN_PARAM)
+			c.Redirect(http.StatusMovedPermanently, rurl)
+			return
 		} else {
 			c.Next()
 		}
