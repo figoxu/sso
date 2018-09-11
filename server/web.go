@@ -10,7 +10,6 @@ import (
 	"fmt"
 	"github.com/figoxu/sso/common"
 	"net/url"
-	jsonp "github.com/jim3ma/gin-jsonp"
 )
 
 func initWeb(port string) {
@@ -30,7 +29,6 @@ func mount() *gin.Engine {
 		{
 			login.GET("/redirect", h_redirect)
 			login.POST("/exc", h_login)
-			login.GET("/token", jsonp.Handler(), h_check_login)
 		}
 	}
 	return r

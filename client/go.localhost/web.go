@@ -31,5 +31,5 @@ func mount() *gin.Engine {
 }
 
 func h_main(c *gin.Context) {
-	c.HTML(200, "main.html", pongo2.Context{})
+	c.HTML(http.StatusOK, "main.html", pongo2.Context{})
 }
